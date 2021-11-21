@@ -34,7 +34,7 @@ class lexer:
 
 def gettype(tokken):
     typeDict = {"(": "prog", ")": "prog", "{": "block", "}": "block", "IF": "stat", "THEN": "stat", "ELSE": "stat",
-                "=": "stat", "<": "cond", "+": "cond", "*": "cond"}
+                "=": "stat", ";": "stat", "<": "cond", "+": "cond", "*": "cond"}
     return typeDict.get(tokken, "null")
 
 
