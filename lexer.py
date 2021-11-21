@@ -12,11 +12,13 @@ class lexer:
         p_word = re.compile('[a-zA-Z]+')
         p_num = re.compile('[0-9]')
         lines = f.readlines()
+        
         for line in lines:
             tokkens = line.split(" ")
             for tokken in tokkens:
                 if tokken.find('\n') != -1:
                     tokken = tokken[0:-1]
+                    
                 if p_word.match(tokken):
                     if tokken == "int":
                         tokken_tuple = ("vtype", tokken)
