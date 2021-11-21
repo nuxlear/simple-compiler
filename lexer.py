@@ -12,26 +12,26 @@ class lexer:
         p_word = re.compile('[a-zA-Z]+')
         p_num = re.compile('[0-9]')
         lines = f.readlines()
-        
+
         for line in lines:
             tokkens = line.split(" ")
             for tokken in tokkens:
                 if tokken.find('\n') != -1:
                     tokken = tokken[0:-1]
-                    
-                if p_word.match(tokken):
-                    if tokken == "int":
-                        tokken_tuple = ("vtype", tokken)
-                    elif tokken == "char":
-                        tokken_tuple = ("vtype", tokken)
-                    else:
+
+                tokken_type = gettype(tokken)
+                tokken_tuple = (tokken_type, tokken)
+
+                if tokken_tuple[0] == "null":
+                    if p_word.match(tokken):
                         tokken_tuple = ("word", tokken)
-                elif p_num.match(tokken):
-                    tokken_tuple = ("num", tokken)
-                else:
-                    tokken_type = gettype(tokken)
-                    tokken_tuple = (tokken_type, tokken)
+                    elif p_num.match(tokken):
+                        tokken_tuple = ("num", tokken)
+                    else:
+                        tokken_tuple = ("null", tokken)
+
                 tokkenList.append(tokken_tuple)
+
         f.close()
 
         return tokkenList
@@ -39,7 +39,7 @@ class lexer:
 
 def gettype(tokken):
     typeDict = {"(": "prog", ")": "prog", "{": "block", "}": "block", "IF": "stat", "THEN": "stat", "ELSE": "stat",
-                "=": "stat", ";": "semi", "<": "cond", "+": "cond", "*": "cond"}
+                "=": "stat", ";": "semi", "<": "cond", "+": "cond", "*": "cond", "int": "vtype", "char": "vtype"}
     return typeDict.get(tokken, "null")
 
 
