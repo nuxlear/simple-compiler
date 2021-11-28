@@ -30,16 +30,16 @@ non_ter ={"prog", "decls", "decls_", "decl", "vtype", "block", "slist", "slist_"
           "stat", "cond", "expr", "expr_", "fact", "word", "num"}
 
 def parse(input_list):
-    stack = ["$", "decls"]
+    stack = ["$", "prog"]
     cur = None
     i = 0
     j = 0
     while j<160:
         j = j + 1
         print(stack)
-        if len(input_list) >= i+1:
+        if len(input_list) > i:
             print(input_list[i][1])
-        if len(input_list) >= i:
+        if len(input_list) > i:
             #token, terminal = stream.current()
 
             if not stack[-1] in non_ter:
@@ -80,11 +80,11 @@ def parse(input_list):
             if stack[-1] == '@':
                stack.pop()
             else:
-                raise ValueError('Parse Error: un-consumed token: {}'.format(stack[-1]))
+                print("haha")
 
     return 1
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    parse([('vtype', 'int'), ('word', 'a'), ('semi', ';'), ('vtype', 'char'), ('word', 'b'), ('semi', ';'), ('vtype', 'int'), ('word', 'c'), ('semi', ';'), ('vtype', 'char'), ('word', 'd'), ('semi', ';'), ('vtype', 'int'), ('word', 'F'), ('semi', ';'), ('word', 'd'), ('stat', '='), ('num', '2'),('semi', ';') ,('word', 'c'), ('stat', '='), ('num', '1'),('semi', ';'), ('stat', 'IF'), ('word', 'c'), ('cond', '<'), ('word', 'd'), ('stat', 'THEN'), ('block', '{'), ('word', 'c'), ('stat', '='), ('num', '1'),('semi', ';'),('block', '}'), ('stat', 'ELSE'), ('block', '{'), ('word', 'd'), ('stat', '='), ('num', '1'), ('semi', ';'),('block', '}'), ('word', 'F'), ('stat', '='),  ('word', 'a'), ('cond', '+'), ('word', 'b'), ('cond', '+'), ('word', 'c'), ('semi', ';'),('word', 'd'), ('stat', '='), ('word', 'ab'), ('cond', '+'), ('word', 'c'),('semi', ';')])
+    parse([('word', 'func'), ('prog', '('), ('prog', ')'), ('block', '{'), ('vtype', 'int'), ('word', 'a'), ('semi', ';'), ('vtype', 'int'), ('word', 'b'), ('semi', ';'), ('vtype', 'int'), ('word', 'c'), ('semi', ';'),  ('vtype', 'int'), ('word', 'dd'), ('semi', ';'),  ('word', 'a'), ('stat', '='), ('num', '3'), ('semi', ';'),  ('word', 'b'), ('stat', '='), ('num', '2'), ('semi', ';'), ('stat', 'IF'), ('word', 'a'), ('cond', '<'), ('word', 'b'), ('stat', 'THEN'), ('block', '{'), ('word', 'c'), ('stat', '='), ('num', '1'), ('semi', ';'), ('block', '}'), ('stat', 'ELSE'), ('block', '{'), ('word', 'c'), ('stat', '='), ('num', '2'), ('semi', ';'), ('block', '}'),  ('word', 'dd'), ('stat', '='), ('word', 'a'), ('cond', '+'), ('word', 'c'), ('semi', ';'), ('block', '}')])
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
