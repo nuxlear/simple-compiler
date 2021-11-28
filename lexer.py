@@ -5,7 +5,7 @@
 import re
 
 
-class lexer:
+class Lexer:
     def scan(self):
         tokkenList = []
         f = open("test.txt", "r")
@@ -45,7 +45,7 @@ def gettype(tokken):
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    new_lexer = lexer()
+    new_lexer = Lexer()
     print(new_lexer.scan())
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
