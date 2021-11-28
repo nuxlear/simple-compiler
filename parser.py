@@ -8,7 +8,7 @@
 import re
 
 
-class arser:
+class Parser:
     p_word = re.compile('[a-zA-Z]+')
     p_num = re.compile('[0-9]')
 
