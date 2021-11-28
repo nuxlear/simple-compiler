@@ -21,8 +21,8 @@ parse_table = {("prog","p_word"): ["word","(",")","block"],("decls","p_word"): [
                ("slist_","IF"): ["stat","slist_"],("slist_","EXIT"): ["stat","slist_"],
                ("stat","p_word"): ["word","=","expr",";"],("stat","IF"): ["IF","cond","THEN","block","ELSE","block"],
                ("stat","EXIT"): ["EXIT","expr",";"],("stat","$"): ['@'],("fact","p_num"): ["num"],
-               ("fact","p_word"): ["word"],("cond","p_word"): ["expr","<","expr"],("cond","THEN"): ["expr","<","expr"],
-               ("cond","p_num"): ["expr","<","expr"],("expr","p_word"): ["fact","expr_"],
+               ("fact","p_word"): ["word"],("cond","p_word"): ["expr","<","expr"],
+               ("cond","p_num"): ["expr","<","expr"],("expr","p_word"): ["fact","expr_"],("expr_","THEN"): ['@'],
                ("expr","p_num"): ["fact","expr_"],("expr_",";"): ['@'],("expr_","<"): ['@'],("expr_","+"): ["+","fact","expr_"],
                ("expr_","*"): ["*","fact","expr_"],("word","p_word"):['p_word'],("num","p_num"):['p_num']
                }
@@ -34,7 +34,7 @@ def parse(input_list):
     cur = None
     i = 0
     j = 0
-    while j<80:
+    while j<160:
         j = j + 1
         print(stack)
         print(input_list[i][1])
@@ -84,6 +84,6 @@ def parse(input_list):
     return 1
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    parse([('vtype', 'int'), ('word', 'a'), ('semi', ';'), ('vtype', 'char'), ('word', 'b'), ('semi', ';'), ('vtype', 'int'), ('word', 'c'), ('semi', ';'), ('vtype', 'char'), ('word', 'd'), ('semi', ';'), ('vtype', 'int'), ('word', 'F'), ('semi', ';'), ('word', 'd'), ('stat', '='), ('num', '2'),('semi', ';') ,('word', 'c'), ('stat', '='), ('num', '1'),('semi', ';'), ('stat', 'IF'), ('word', 'c'), ('cond', '<'), ('word', 'd'), ('stat', 'THEN'), ('block', '{'), ('word', 'c'), ('stat', '='), ('num', '1'), ('block', '}'), ('stat', 'ELSE'), ('block', '{'), ('word', 'd'), ('stat', '='), ('num', '1'), ('block', '}'), ('word', 'F'), ('stat', '='), ('prog', '('), ('word', 'a'), ('cond', '+'), ('word', 'b'), ('prog', ')'), ('cond', '+'), ('word', 'c'), ('word', 'd'), ('stat', '='), ('word', 'ab'), ('cond', '+'), ('word', 'c')])
+    parse([('vtype', 'int'), ('word', 'a'), ('semi', ';'), ('vtype', 'char'), ('word', 'b'), ('semi', ';'), ('vtype', 'int'), ('word', 'c'), ('semi', ';'), ('vtype', 'char'), ('word', 'd'), ('semi', ';'), ('vtype', 'int'), ('word', 'F'), ('semi', ';'), ('word', 'd'), ('stat', '='), ('num', '2'),('semi', ';') ,('word', 'c'), ('stat', '='), ('num', '1'),('semi', ';'), ('stat', 'IF'), ('word', 'c'), ('cond', '<'), ('word', 'd'), ('stat', 'THEN'), ('block', '{'), ('word', 'c'), ('stat', '='), ('num', '1'),('semi', ';'),('block', '}'), ('stat', 'ELSE'), ('block', '{'), ('word', 'd'), ('stat', '='), ('num', '1'), ('semi', ';'),('block', '}'), ('word', 'F'), ('stat', '='),  ('word', 'a'), ('cond', '+'), ('word', 'b'), ('cond', '+'), ('word', 'c'), ('semi', ';'),('word', 'd'), ('stat', '='), ('word', 'ab'), ('cond', '+'), ('word', 'c'),('semi', ';')])
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
