@@ -10,31 +10,31 @@ p_word = re.compile('[a-zA-Z]+')
 p_num  = re.compile('[0-9]')
 
 parse_table = {("prog","p_word"): ["word","(",")","block"],("decls","p_word"): ['@'],
-               ("decls","IF"): ['@'], ("decls","exit"): ['@'],("decls","$"): ['@'],("decls","int"): ["decls`"],
-               ("decls","char"): ["decls`"],("decls`","p_word"): ["slist"],
-               ("decls`","IF"): ['@'], ("decls`","EXIT"): ['@'],("decls`","$"): ['@'],("decls`","int"): ["decl","decls`"],
-               ("decls`","char"): ["decl","decls`"],("decl","int"): ["vtype","word",";"],("decl","char"): ["vtype","word",";"],
+               ("decls","IF"): ['@'], ("decls","exit"): ['@'],("decls","$"): ['@'],("decls","int"): ["decls_"],
+               ("decls","char"): ["decls_"],("decls_","p_word"): ["slist"],
+               ("decls_","IF"): ['@'], ("decls_","EXIT"): ['@'],("decls_","$"): ['@'],("decls_","int"): ["decl","decls_"],
+               ("decls_","char"): ["decl","decls_"],("decl","int"): ["vtype","word",";"],("decl","char"): ["vtype","word",";"],
                ("decl","$"): ['@'],("vtype","p_word"): ['@'],("vtype","int"): ["int"],("vtype","char"): ["char"],
                ("vtype","$"): ['@'],("block","IF"): ['@'],("block","ELSE"): ['@'],("block","EXIT"): ['@'],("block","$"): ['@'],("block","{"): ["{","decls","slist","}"],
-               ("slist","p_word"): ["stat","slist`"],("slist","IF"): ["stat","slist`"],("slist","EXIT"): ["stat","slist`"],
-               ("slist","}"): ['@'],("slist","$"): ['@'],("slist`","p_word"): ["stat","slist`"],
-               ("slist`","IF"): ["stat","slist`"],("slist`","EXIT"): ["stat","slist`"],
+               ("slist","p_word"): ["stat","slist_"],("slist","IF"): ["stat","slist_"],("slist","EXIT"): ["stat","slist_"],
+               ("slist","}"): ['@'],("slist","$"): ['@'],("slist_","p_word"): ["stat","slist_"],
+               ("slist_","IF"): ["stat","slist_"],("slist_","EXIT"): ["stat","slist_"],
                ("stat","p_word"): ["word","=","expr",";"],("stat","IF"): ["IF","cond","THEN","block","ELSE","block"],
                ("stat","EXIT"): ["EXIT","expr",";"],("stat","$"): ['@'],("fact","p_num"): ["num"],
-               ("fact","p_word"): ["word"],("cond","p_word"): ["expr","<","expr"],
-               ("cond","p_num"): ["expr","<","expr"],("expr","p_word"): ["fact","expr`"],
-               ("expr","p_num"): ["fact","expr`"],("expr`",";"): ['@'],("expr`","<"): ['@'],("expr`","+"): ["+","fact","expr`"],
-               ("expr`","*"): ["*","fact","expr`"],("word","p_word"):['p_word'],("num","p_num"):['p_num']
+               ("fact","p_word"): ["word"],("cond","p_word"): ["expr","<","expr"],("cond","THEN"): ["expr","<","expr"],
+               ("cond","p_num"): ["expr","<","expr"],("expr","p_word"): ["fact","expr_"],
+               ("expr","p_num"): ["fact","expr_"],("expr_",";"): ['@'],("expr_","<"): ['@'],("expr_","+"): ["+","fact","expr_"],
+               ("expr_","*"): ["*","fact","expr_"],("word","p_word"):['p_word'],("num","p_num"):['p_num']
                }
-non_ter ={"prog", "decls", "decls`", "decl", "vtype", "block", "slist", "slist`",
-          "stat", "cond", "expr", "expr`", "fact", "word", "num"}
+non_ter ={"prog", "decls", "decls_", "decl", "vtype", "block", "slist", "slist_",
+          "stat", "cond", "expr", "expr_", "fact", "word", "num"}
 
 def parse(input_list):
     stack = ["$", "decls"]
     cur = None
     i = 0
     j = 0
-    while True:
+    while j<80:
         j = j + 1
         print(stack)
         print(input_list[i][1])
