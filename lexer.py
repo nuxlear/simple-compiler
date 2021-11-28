@@ -29,8 +29,9 @@ class Lexer:
                         tokken_tuple = ("num", tokken)
                     else:
                         tokken_tuple = ("null", tokken)
-
-                tokkenList.append(tokken_tuple)
+                        
+                if tokken_tuple[0] != "null":
+                    tokkenList.append(tokken_tuple)
 
         f.close()
 
