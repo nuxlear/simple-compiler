@@ -8,7 +8,7 @@
 import re
 
 
-class parser:
+class arser:
     p_word = re.compile('[a-zA-Z]+')
     p_num = re.compile('[0-9]')
 
@@ -100,7 +100,7 @@ class parser:
         return 1
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    p = parser();
+    p = Parser();
     p.parse([('word', 'func'), ('prog', '('), ('prog', ')'), ('block', '{'), ('vtype', 'int'), ('word', 'a'), ('semi', ';'), ('vtype', 'int'), ('word', 'b'), ('semi', ';'), ('vtype', 'int'), ('word', 'c'), ('semi', ';'),  ('vtype', 'int'), ('word', 'dd'), ('semi', ';'),  ('word', 'a'), ('stat', '='), ('num', '3'), ('semi', ';'),  ('word', 'b'), ('stat', '='), ('num', '2'), ('semi', ';'), ('stat', 'IF'), ('word', 'a'), ('cond', '<'), ('word', 'b'), ('stat', 'THEN'), ('block', '{'), ('word', 'c'), ('stat', '='), ('num', '1'), ('semi', ';'), ('block', '}'), ('stat', 'ELSE'), ('block', '{'), ('word', 'c'), ('stat', '='), ('num', '2'), ('semi', ';'), ('block', '}'),  ('word', 'dd'), ('stat', '='), ('word', 'a'), ('cond', '+'), ('word', 'c'), ('semi', ';'), ('block', '}')])
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
