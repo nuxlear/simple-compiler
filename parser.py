@@ -37,8 +37,9 @@ def parse(input_list):
     while j<160:
         j = j + 1
         print(stack)
-        print(input_list[i][1])
-        if len(input_list) > i:
+        if len(input_list) >= i+1:
+            print(input_list[i][1])
+        if len(input_list) >= i:
             #token, terminal = stream.current()
 
             if not stack[-1] in non_ter:
@@ -69,9 +70,9 @@ def parse(input_list):
                     #stack.extend([(t, cur) for t in gram[::-1]])
                     stack.extend(gram2)
                 if gram == ['p_word']:
-                    stack.extend(input_list[i][1])
+                    stack.append(input_list[i][1])
                 if gram == ['p_num']:
-                    stack.extend(input_list[i][1])
+                    stack.append(input_list[i][1])
 
         else:
             if stack[-1] == '$':
