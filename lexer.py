@@ -1,52 +1,47 @@
-# This is a sample Python script.
-
-# Press ⌃R to execute it or replace it with your code.
-# Press Double ⇧ to search everywhere for classes, files, tool windows, actions, and settings.
 import re
 
 
 class Lexer:
+    p_word = re.compile('[a-zA-Z]+')
+    p_num = re.compile('[0-9]+')
+    
+    def __init__(self, input_path):
+        self.input_path = input_path
+
     def scan(self):
-        tokkenList = []
-        f = open("test.txt", "r")
-        p_word = re.compile('[a-zA-Z]+')
-        p_num = re.compile('[0-9]')
-        lines = f.readlines()
+        tokenList = []
+        with open(self.input_path, "r") as f:
+            lines = f.readlines()
 
         for line in lines:
-            tokkens = line.split(" ")
-            for tokken in tokkens:
-                if tokken.find('\n') != -1:
-                    tokken = tokken[0:-1]
+            tokens = line.strip().split(" ")
+            for token in tokens:
+                # if token.find('\n') != -1:
+                #     token = token[0:-1]
 
-                tokken_type = gettype(tokken)
-                tokken_tuple = (tokken_type, tokken)
+                token_type = gettype(token)
+                token_tuple = (token_type, token)
 
-                if tokken_tuple[0] == "null":
-                    if p_word.match(tokken):
-                        tokken_tuple = ("word", tokken)
-                    elif p_num.match(tokken):
-                        tokken_tuple = ("num", tokken)
+                if token_tuple[0] == "null":
+                    if self.p_word.match(token):
+                        token_tuple = ("word", token)
+                    elif self.p_num.match(token):
+                        token_tuple = ("num", token)
                     else:
-                        tokken_tuple = ("null", tokken)
+                        token_tuple = ("null", token)
                         
-                if tokken_tuple[0] != "null":
-                    tokkenList.append(tokken_tuple)
+                if token_tuple[0] != "null":
+                    tokenList.append(token_tuple)
 
-        f.close()
-
-        return tokkenList
+        return tokenList
 
 
-def gettype(tokken):
+def gettype(token):
     typeDict = {"(": "prog", ")": "prog", "{": "block", "}": "block", "IF": "stat", "THEN": "stat", "ELSE": "stat",
                 "=": "stat", ";": "semi", "<": "cond", "+": "cond", "*": "cond", "int": "vtype", "char": "vtype"}
-    return typeDict.get(tokken, "null")
+    return typeDict.get(token, "null")
 
 
-# Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    new_lexer = Lexer()
+    new_lexer = Lexer('input_code.txt')
     print(new_lexer.scan())
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/

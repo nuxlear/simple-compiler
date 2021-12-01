@@ -1,16 +1,40 @@
-# This is a sample Python script.
-
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
-
-
-
 import re
+
+
+class Node:
+    def __init__(self, val, parent):
+        self.parent = parent
+        self.val = val
+
+    def __repr__(self):
+        s = f'{self.val}'
+        return s
+
+
+class NonTerminal(Node):
+    def __init__(self, val, parent, child=None):
+        super().__init__(val, parent)
+        self.child = child or []
+
+    def add(self, leaf):
+        self.child.append(leaf)
+
+    def __repr__(self):
+        s = super().__repr__()
+        if len(self.child) > 0:
+            s += f' => {self.child}'
+        return s
+
+
+class Terminal(Node):
+    def __repr__(self):
+        s = super().__repr__()
+        return f'`{s}`'
 
 
 class Parser:
     p_word = re.compile('[a-zA-Z]+')
-    p_num = re.compile('[0-9]')
+    p_num = re.compile('[0-9]+')
 
     parse_table = {("prog", "p_word"): ["word", "(", ")", "block"], ("decls", "p_word"): ['@'],
                    ("decls", "IF"): ['@'], ("decls", "exit"): ['@'], ("decls", "$"): ['@'],
@@ -43,64 +67,79 @@ class Parser:
     non_ter = {"prog", "decls", "decls_", "decl", "vtype", "block", "slist", "slist_",
                "stat", "cond", "expr", "expr_", "fact", "word", "num"}
 
+    def parse(self, input_list, debug=False):
+        root_node = None
+        stack = [Terminal("$", None), NonTerminal("prog", None)]
+        i, j = 0, 0
 
-    def parse(self, input_list):
-        stack = ["$", "prog"]
-        cur = None
-        i = 0
-        j = 0
-        while j<160:
-            j = j + 1
-            print(stack)
+        while True:
+            j += 1
+            if debug:
+                for u in stack:
+                    print(u.val, end=' ')
+                print()
+                if len(input_list) > i:
+                    print(input_list[i][1])
+
             if len(input_list) > i:
-                print(input_list[i][1])
-            if len(input_list) > i:
-                #token, terminal = stream.current()
-
-                if not stack[-1] in self.non_ter:
-                    if stack[-1] == input_list[i][1]:
-                        stack.pop()
-                        i = i + 1
-
-                    #else:
-                        #raise ValueError('token and grammar rule doesn\'t match: {} with {}'.format(terminal, gram))
+                if stack[-1].val not in self.non_ter:
+                    if stack[-1].val == input_list[i][1]:
+                        nodes = stack.pop()
+                        nodes.parent.add(nodes)
+                        i += 1
 
                 else:
+                    key = None
+                    gram = []
                     if self.p_word.match(input_list[i][1]):
-                        key = (stack[-1], "p_word")
+                        key = (stack[-1].val, "p_word")
                     if self.p_num.match(input_list[i][1]):
-                        key = (stack[-1], "p_num")
-                    if key in self.parse_table:
-                        gram = self.parse_table[key]
-                    key = (stack[-1], input_list[i][1])
+                        key = (stack[-1].val, "p_num")
                     if key in self.parse_table:
                         gram = self.parse_table[key]
 
-                    #else:
-                       #raise ValueError(
-                            #'Parse Error: expected `{}` in next token.'.format(', '.join(self.first[stack[-1]])))
-                    stack.pop()
+                    key = (stack[-1].val, input_list[i][1])
+                    if key in self.parse_table:
+                        gram = self.parse_table[key]
+
+                    nodes = stack.pop()
+                    if nodes.parent is None:
+                        root_node = nodes
+                    else:
+                        nodes.parent.add(nodes)
+
                     gram2 = reversed(gram)
-                    if gram != ['@'] and gram != ['p_word'] and gram != ['p_num']:
-                        #stack.extend([(t, cur) for t in gram[::-1]])
-                        stack.extend(gram2)
-                    if gram == ['p_word']:
-                        stack.append(input_list[i][1])
-                    if gram == ['p_num']:
-                        stack.append(input_list[i][1])
+                    if gram not in [['@'], ['p_word'], ['p_num']]:
+                        for n in gram2:
+                            node_cls = NonTerminal if n in self.non_ter else Terminal
+                            d = node_cls(n, nodes)
+                            stack.append(d)
+                    elif gram != ['@']:
+                        d = Terminal(input_list[i][1], nodes)
+                        stack.append(d)
 
             else:
-                if stack[-1] == '$':
+                if stack[-1].val == '$':
                     break
-                if stack[-1] == '@':
-                   stack.pop()
+                if stack[-1].val == '@':
+                    nodes = stack.pop()
+                    nodes.parent.add(nodes)
                 else:
-                    print("haha")
+                    raise ValueError(f'Invalid syntax')
 
-        return 1
-# Press the green button in the gutter to run the script.
+        return root_node
+
+
 if __name__ == '__main__':
-    p = Parser();
-    p.parse([('word', 'func'), ('prog', '('), ('prog', ')'), ('block', '{'), ('vtype', 'int'), ('word', 'a'), ('semi', ';'), ('vtype', 'int'), ('word', 'b'), ('semi', ';'), ('vtype', 'int'), ('word', 'c'), ('semi', ';'),  ('vtype', 'int'), ('word', 'dd'), ('semi', ';'),  ('word', 'a'), ('stat', '='), ('num', '3'), ('semi', ';'),  ('word', 'b'), ('stat', '='), ('num', '2'), ('semi', ';'), ('stat', 'IF'), ('word', 'a'), ('cond', '<'), ('word', 'b'), ('stat', 'THEN'), ('block', '{'), ('word', 'c'), ('stat', '='), ('num', '1'), ('semi', ';'), ('block', '}'), ('stat', 'ELSE'), ('block', '{'), ('word', 'c'), ('stat', '='), ('num', '2'), ('semi', ';'), ('block', '}'),  ('word', 'dd'), ('stat', '='), ('word', 'a'), ('cond', '+'), ('word', 'c'), ('semi', ';'), ('block', '}')])
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    p = Parser()
+    root = p.parse(
+        [('word', 'func'), ('prog', '('), ('prog', ')'), ('block', '{'), ('vtype', 'int'), ('word', 'a'), ('semi', ';'),
+         ('vtype', 'int'), ('word', 'b'), ('semi', ';'), ('vtype', 'int'), ('word', 'c'), ('semi', ';'),
+         ('vtype', 'int'), ('word', 'dd'), ('semi', ';'), ('word', 'a'), ('stat', '='), ('num', '3'), ('semi', ';'),
+         ('word', 'b'), ('stat', '='), ('num', '2'), ('semi', ';'), ('stat', 'IF'), ('word', 'a'), ('cond', '<'),
+         ('word', 'b'), ('stat', 'THEN'), ('block', '{'), ('word', 'c'), ('stat', '='), ('num', '1'), ('semi', ';'),
+         ('block', '}'), ('stat', 'ELSE'), ('block', '{'), ('word', 'c'), ('stat', '='), ('num', '2'), ('semi', ';'),
+         ('block', '}'), ('word', 'dd'), ('stat', '='), ('word', 'a'), ('cond', '+'), ('word', 'c'), ('semi', ';'),
+         ('block', '}')],
+        debug=True)
+    print(root)
