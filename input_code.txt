@@ -1,0 +1,10 @@
+func ( ) { 
+ int a ;
+ int b ;
+ int c ;
+ int dd ;
+ a = 3 ;
+ b = 2 ;
+ IF a < b THEN { c = 1 ; } ELSE { c = 2 ; }
+ dd = a + c ;
+ }
