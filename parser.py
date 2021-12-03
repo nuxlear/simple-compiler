@@ -37,8 +37,8 @@ class Parser:
     p_word = re.compile('[a-zA-Z]+')
     p_num = re.compile('[0-9]+')
 
-    parse_table = {("prog", "p_word"): ["word", "(", ")", "block"], ("decls", "p_word"): ['@'],
-                   ("decls", "IF"): ['@'], ("decls", "exit"): ['@'], ("decls", "$"): ['@'],
+    parse_table = {("prog", "p_word"): ["word", "(", ")", "block"], ("decls", "p_word"): ["decls_"],
+                   ("decls", "IF"): ["decls_"], ("decls", "exit"): ["decls_"], ("decls", "$"): ["decls_"],
                    ("decls", "int"): ["decls_"],
                    ("decls", "char"): ["decls_"],("decls_", "p_word"): ["@"],
                    ("decls_", "IF"): ['@'], ("decls_", "EXIT"): ['@'], ("decls_", "$"): ['@'],
