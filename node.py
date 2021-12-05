@@ -1,6 +1,10 @@
 from typing import Optional
 
 
+def indent(lines):
+    return [f'\t{x}' for x in lines]
+
+
 class Node:
     def __init__(self, parent=None):
         self.parent: Node = parent
@@ -11,9 +15,18 @@ class Node:
     def traverse(self):
         raise NotImplemented
 
+    def __repr__(self):
+        return '\n'.join(map(str, self.repr_lines()))
+
+    def repr_lines(self):
+        raise NotImplemented
+
 
 class Epsilon(Node):
     def traverse(self):
+        return []
+
+    def repr_lines(self):
         return []
 
 
@@ -31,6 +44,9 @@ class Prog(NonTerminal):
         name = self.word.val
         return [('begin', name)] + self.block.traverse() + [('end', name)]
 
+    def repr_lines(self):
+        return [f'{self.word} ()'] + indent(self.block.repr_lines())
+
 
 class Block(NonTerminal):
     def __init__(self, decls, slist, parent=None):
@@ -41,6 +57,9 @@ class Block(NonTerminal):
     def traverse(self):
         return self.decls.traverse() + self.slist.traverse()
 
+    def repr_lines(self):
+        return ['{'] + indent(self.decls.repr_lines()) + indent(self.slist.repr_lines()) + ['}']
+
 
 class Decls(NonTerminal):
     def __init__(self, decls_, parent=None):
@@ -49,6 +68,9 @@ class Decls(NonTerminal):
 
     def traverse(self):
         return self.decls_.traverse()
+
+    def repr_lines(self):
+        return self.decls_.repr_lines()
 
 
 class DeclsTail(NonTerminal):
@@ -59,6 +81,9 @@ class DeclsTail(NonTerminal):
 
     def traverse(self):
         return self.decl.traverse() + self.decls_.traverse()
+
+    def repr_lines(self):
+        return self.decl.repr_lines() + self.decls_.repr_lines()
 
 
 class Decl(NonTerminal):
@@ -71,6 +96,10 @@ class Decl(NonTerminal):
     def traverse(self):
         return [('decl', self.vtype, self.word.traverse())]
 
+    def repr_lines(self):
+        type_str = self.vtype + ' ' if self.vtype is not None else ''
+        return [f'{type_str}{self.word.val};']
+
 
 class Slist(NonTerminal):
     def __init__(self, stat, slist_, parent=None):
@@ -81,6 +110,9 @@ class Slist(NonTerminal):
     def traverse(self):
         return self.stat.traverse() + self.slist_.traverse()
 
+    def repr_lines(self):
+        return self.stat.repr_lines() + self.slist_.repr_lines()
+
 
 class SlistTail(NonTerminal):
     def __init__(self, stat, slist_, parent=None):
@@ -90,6 +122,9 @@ class SlistTail(NonTerminal):
 
     def traverse(self):
         return self.stat.traverse() + self.slist_.traverse()
+
+    def repr_lines(self):
+        return self.stat.repr_lines() + self.slist_.repr_lines()
 
 
 class Stat(NonTerminal):
@@ -106,6 +141,11 @@ class IfElseStat(Stat):
     def traverse(self):
         return [('cond', self.cond.traverse(), self.true_block.traverse(), self.false_block.traverse())]
 
+    def repr_lines(self):
+        return ['IF'] + self.cond.repr_lines() + \
+               ['THEN'] + self.true_block.repr_lines() + \
+               ['ELSE'] + self.false_block.repr_lines()
+
 
 class CondStat(NonTerminal):
     def __init__(self, first_expr, second_expr, parent=None):
@@ -115,6 +155,9 @@ class CondStat(NonTerminal):
 
     def traverse(self):
         return [('lt', self.first_expr.traverse(), self.second_expr.traverse())]
+
+    def repr_lines(self):
+        return [f'{self.first_expr.repr_lines()} < {self.second_expr.repr_lines()}']
 
 
 class AssignStat(Stat):
@@ -126,6 +169,9 @@ class AssignStat(Stat):
     def traverse(self):
         return [('assign', self.word.val, self.expr.traverse())]
 
+    def repr_lines(self):
+        return [f'{self.word.val} = {self.expr};']
+
 
 class ExitStat(Stat):
     def __init__(self, expr, parent=None):
@@ -134,6 +180,9 @@ class ExitStat(Stat):
 
     def traverse(self):
         return [('exit', self.expr.traverse())]
+
+    def repr_lines(self):
+        return [f'EXIT {self.expr}']
 
 
 class Expr(NonTerminal):
@@ -144,6 +193,9 @@ class Expr(NonTerminal):
 
     def traverse(self):
         return self.fact.traverse() + self.expr_.traverse()
+
+    def repr_lines(self):
+        return self.fact.repr_lines() + self.expr_.repr_lines()
 
 
 class ExprTail(NonTerminal):
@@ -158,6 +210,9 @@ class ExprTail(NonTerminal):
         op_table = {'+': 'add', '*': 'mul'}
         return (op_table[self.op],) + self.fact.traverse() + self.expr_.traverse()
 
+    def repr_lines(self):
+        return [self.op] + self.fact.repr_lines() + self.expr_.repr_lines()
+
 
 class Fact(NonTerminal):
     def __init__(self, value, parent=None):
@@ -167,6 +222,9 @@ class Fact(NonTerminal):
     def traverse(self):
         return (self.value.traverse(),)
 
+    def repr_lines(self):
+        return [self.value]
+
 
 class Terminal(Node):
     def __init__(self, val, parent=None):
@@ -175,6 +233,9 @@ class Terminal(Node):
 
     def traverse(self):
         return self.val
+
+    def repr_lines(self):
+        return [self.val]
 
 
 class Word(Terminal):

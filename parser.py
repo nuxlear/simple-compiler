@@ -2,7 +2,7 @@ import re
 from node import *
 
 
-class Tree_node:
+class TreeNode:
     def __init__(self, val, parent):
         self.parent = parent
         self.val = val
@@ -12,7 +12,7 @@ class Tree_node:
         return s
 
 
-class NonTerminal(Tree_node):
+class NonTerminalTN(TreeNode):
     def __init__(self, val, parent, child=None):
         super().__init__(val, parent)
         self.child = child or []
@@ -27,10 +27,10 @@ class NonTerminal(Tree_node):
         return s
 
 
-class Terminal(Tree_node):
+class TerminalTN(TreeNode):
     def __repr__(self):
         s = super().__repr__()
-        return f'`{s}`'
+        return f'{s}'
 
 
 class Parser:
@@ -70,7 +70,7 @@ class Parser:
 
     def parse(self, input_list, debug=False):
         root_node = None
-        stack = [Terminal("$", None), NonTerminal("prog", None)]
+        stack = [TerminalTN("$", None), NonTerminalTN("prog", None)]
         i, j = 0, 0
 
         while True:
@@ -114,11 +114,11 @@ class Parser:
                     gram2 = reversed(gram)
                     if gram not in [['@'], ['p_word'], ['p_num']]:
                         for n in gram2:
-                            node_cls = NonTerminal if n in self.non_ter else Terminal
+                            node_cls = NonTerminalTN if n in self.non_ter else TerminalTN
                             d = node_cls(n, nodes)
                             stack.append(d)
                     elif gram != ['@']:
-                        d = Terminal(input_list[i][1], nodes)
+                        d = TerminalTN(input_list[i][1], nodes)
                         stack.append(d)
 
             else:
@@ -131,7 +131,6 @@ class Parser:
                     raise ValueError(f'Invalid syntax')
 
         return root_node
-
 
 
 def Maketree(origin_node):
@@ -263,7 +262,6 @@ def Maketree(origin_node):
         return nodes
 
 
-
 if __name__ == '__main__':
     p = Parser()
     root = p.parse(
@@ -291,4 +289,6 @@ if __name__ == '__main__':
     #root2 = Prog(root.child[0],root.child[3])
     root2 = Maketree(root)
     print(root2)
+    code = root2.traverse()
+    print(code)
 
