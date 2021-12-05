@@ -1,10 +1,9 @@
-from lexer import *
-from parser import *
-from code_generator import *
+from simple_compiler.lexer import *
+from simple_compiler.parser import *
+from simple_compiler.code_generator import *
 
 import os
 import sys
-from pathlib import Path
 
 
 def main():
@@ -21,8 +20,10 @@ def main():
     generator = CodeGenerator()
 
     tokens = lexer.scan()
-    tree = parser.parse(tokens)
+    tree = Maketree(parser.parse(tokens))
     code = generator.generate(tree)
+    for x in code:
+        print(x)
 
 
 if __name__ == '__main__':
