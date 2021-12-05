@@ -135,10 +135,10 @@ class Parser:
 
 def Maketree(origin_node):
     if origin_node.val == "word":
-        nodes = Word(origin_node.child[0])
+        nodes = Word(origin_node.child[0].val)
         return nodes
     if origin_node.val == "num":
-        nodes = Num(origin_node.child[0])
+        nodes = Num(origin_node.child[0].val)
         return nodes
     if origin_node.val == "fact":
         leaf = Maketree(origin_node.child[0])
