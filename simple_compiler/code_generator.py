@@ -22,7 +22,7 @@ class CodeGenerator:
                 symbol_table[id_counter] = (bid, line[1].upper(), line[2])
                 id_counter += 1
 
-        return blocks
+        return symbol_table
 
     def _find_block_nodes(self, node):
         blocks = []

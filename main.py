@@ -21,6 +21,10 @@ def main():
 
     tokens = lexer.scan()
     tree = Maketree(parser.parse(tokens))
+    symbol = generator._make_symbol_table(tree)
+    for k, v in symbol.items():
+        print(f'{k}: {v}')
+    print()
     code = generator.generate(tree)
     for x in code:
         print(x)

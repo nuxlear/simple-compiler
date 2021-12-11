@@ -223,39 +223,75 @@ class ExitStat(Stat):
 
 
 class Expr(NonTerminal):
-    def __init__(self, fact, expr_, parent=None):
+    def __init__(self, term, expr_, parent=None):
         super(Expr, self).__init__(parent=parent)
-        self.fact: Fact = fact
+        self.term: Term = term
         self.expr_: Optional[ExprTail, Epsilon] = expr_
 
     def get_child(self):
-        return [self.fact, self.expr_]
+        return [self.term, self.expr_]
 
     def traverse(self):
-        fs = [self.fact.traverse()] + self.expr_.traverse()
+        fs = [self.term.traverse()] + self.expr_.traverse()
         return tuple(itertools.chain.from_iterable(fs))
 
     def repr_lines(self):
-        return self.fact.repr_lines() + self.expr_.repr_lines()
+        return self.term.repr_lines() + self.expr_.repr_lines()
 
 
 class ExprTail(NonTerminal):
-    def __init__(self, op, fact, expr_, parent=None):
+    def __init__(self, op, term, expr_, parent=None):
         super(ExprTail, self).__init__(parent=parent)
-        assert op in ['+', '*'], ValueError(f'Invalid op: {op}')
+        # assert op in ['+', '*'], ValueError(f'Invalid op: {op}')
+        assert op == '+', ValueError(f'Invalid op in ExprTail: {op}')
         self.op: str = op
-        self.fact: Fact = fact
+        self.term: Term = term
         self.expr_: Optional[ExprTail, Epsilon] = expr_
 
     def get_child(self):
-        return [self.fact, self.expr_]
+        return [self.term, self.expr_]
 
     def traverse(self):
-        op_table = {'+': 'add', '*': 'mul'}
-        return [(op_table[self.op],) + self.fact.traverse()] + self.expr_.traverse()
+        return [('+',) + self.term.traverse()] + self.expr_.traverse()
 
     def repr_lines(self):
-        return [self.op] + self.fact.repr_lines() + self.expr_.repr_lines()
+        return [self.op] + self.term.repr_lines() + self.expr_.repr_lines()
+
+
+class Term(NonTerminal):
+    def __init__(self, fact, term_, parent=None):
+        super(Term, self).__init__(parent=parent)
+        self.fact: Fact = fact
+        self.term_: Optional[TermTail, Epsilon] = term_
+
+    def get_child(self):
+        return [self.fact, self.term_]
+
+    def traverse(self):
+        fs = [self.fact.traverse()] + self.term_.traverse()
+        return tuple(itertools.chain.from_iterable(fs))
+
+    def repr_lines(self):
+        return self.fact.repr_lines() + self.term_.repr_lines()
+
+
+class TermTail(NonTerminal):
+    def __init__(self, op, fact, term_, parent=None):
+        super(TermTail, self).__init__(parent=parent)
+        # assert op in ['+', '*'], ValueError(f'Invalid op: {op}')
+        assert op == '*', ValueError(f'Invalid op in TermTail: {op}')
+        self.op: str = op
+        self.fact: Fact = fact
+        self.term_: Optional[TermTail, Epsilon] = term_
+
+    def get_child(self):
+        return [self.fact, self.term_]
+
+    def traverse(self):
+        return [('*',) + self.fact.traverse()] + self.term_.traverse()
+
+    def repr_lines(self):
+        return [self.op] + self.fact.repr_lines() + self.term_.repr_lines()
 
 
 class Fact(NonTerminal):
