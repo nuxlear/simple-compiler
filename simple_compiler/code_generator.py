@@ -4,6 +4,12 @@ from typing import List
 
 
 class OpNode:
+    """
+    OpNode
+    - Assembly 구문의 연산 우선 순위와 레지스터 관리를 위해서 만드는 추가적인 트리 구조
+    - OpNode는 이 중 Operation을 담당하고, 언제나 non-leaf node이다.
+    - register allocation을 위해 regnum 이란 변수를 저장해, sethi-ullman 알고리즘을 구현한다.
+    """
     def __init__(self, op, left=None, right=None, parent=None):
         self.op = op
         self.parent = parent
@@ -16,6 +22,11 @@ class OpNode:
 
 
 class ValNode:
+    """
+    ValNode
+    - Assembly 구문의 연산 우선 순위와 레지스터 관리를 위해서 만드는 추가적인 트리 구조
+    - ValNode는 이 중 Operand를 담당하고, 언제나 leaf node이다.
+    """
     def __init__(self, val, parent=None):
         self.val = val
         self.parent = parent
@@ -26,6 +37,17 @@ class ValNode:
 
 
 class CodeGenerator:
+    """
+    CodeGenerator
+    - 앞서 Parser에서 변환한 Syntax Tree 를 활용해 Assembly 코드를 생성한다.
+    - Code generation은 다음과 같은 순서를 따라 작동한다.
+        1) Syntax Tree를 순회해 모든 symbol과 그 scope를 찾아낸다.
+        2) Assembly로 변환되어야 할 코드를 트리 순회로 가져와 intermediate representation을 만든다.
+           여기서 intermediate representation은 Assembly-like pseudo-code이다.
+        3) 연산 우선 순위와 register allocation을 위해 intermediate representation을 OpNode, ValNode의
+           Tree 구조로 단순화한다.
+        4) 만들어진 Tree 구조를 순회하면서 앞서 미리 구한 정보들을 활용해 Assembly 코드를 작성한다.
+    """
     def __init__(self):
         self.cond_jump_counter = 0
         self.max_reg_num = 0

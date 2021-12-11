@@ -3,6 +3,12 @@ from simple_compiler.node import *
 
 
 class TreeNode:
+    """
+    TreeNode
+    - Parsing Tree의 node 객체.
+    - Parser가 토큰을 처리하면서 TreeNode 타입의 트리 구조를 만들어 낸다.
+    - 이후 Maketree() 함수를 통해 Syntax Tree 형태로 변환한다.
+    """
     def __init__(self, val, parent):
         self.parent = parent
         self.val = val
@@ -34,6 +40,11 @@ class TerminalTN(TreeNode):
 
 
 class Parser:
+    """
+    Parser
+    - 정해진 Grammar에 맞게 token들을 이해하고 Parsed Tree를 만들어낸다.
+    - Grammar에 맞지 않아 parsing에 실패하는 경우 ValueError를 raise해 잘못된 syntax가 사용되었다는 것을 알린다.
+    """
     p_word = re.compile('[a-zA-Z]+')
     p_num = re.compile('[0-9]+')
 
@@ -134,6 +145,13 @@ class Parser:
 
 
 def Maketree(origin_node):
+    """
+    Maketree
+    - Parsed Tree의 각 노드를 세부적인 타입으로 나뉘어져 있는 Syntax Tree 꼴로 변환해
+      이후 code generation 작업이 원활하도록 하는 함수.
+    :param origin_node: TreeNode 타입의 Parsed Tree
+    :return: Node 타입의 Syntax Tree
+    """
     if origin_node.val == "word":
         nodes = Word(origin_node.child[0].val)
         return nodes

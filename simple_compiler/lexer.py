@@ -2,6 +2,12 @@ import re
 
 
 class Lexer:
+    """
+    Lexer
+    - 주어진 파일 경로로부터 텍스트를 읽어와 tokenize한다.
+    - 띄어쓰기 이슈를 줄이기 위해 re.sub()으로 패턴을 인식해 tokenize한다.
+    - 입력된 코드를 List[Tuple(token_type, token)] 형태의 token들로 반환한다.
+    """
     p_word = re.compile('[a-zA-Z]+')
     p_num = re.compile('[0-9]+')
     
