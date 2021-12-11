@@ -37,7 +37,7 @@ class Parser:
     p_word = re.compile('[a-zA-Z]+')
     p_num = re.compile('[0-9]+')
 
-    parse_table = {("prog", "p_word"): ["word", "(", ")", "block"], ("decls", "p_word"): ["decls_"],
+        parse_table = {("prog", "p_word"): ["word", "(", ")", "block"], ("decls", "p_word"): ["decls_"],
                    ("decls", "IF"): ["decls_"], ("decls", "exit"): ["decls_"], ("decls", "$"): ["decls_"],
                    ("decls", "int"): ["decls_"],
                    ("decls", "char"): ["decls_"],("decls_", "p_word"): ["@"],
@@ -57,16 +57,16 @@ class Parser:
                    ("stat", "p_word"): ["word", "=", "expr", ";"],
                    ("stat", "IF"): ["IF", "cond", "THEN", "block", "ELSE", "block"],
                    ("stat", "EXIT"): ["EXIT", "expr", ";"], ("stat", "$"): ['@'], ("fact", "p_num"): ["num"],
-                   ("fact", "p_word"): ["word"], ("cond", "p_word"): ["expr", "<", "expr"],
-                   ("cond", "p_num"): ["expr", "<", "expr"], ("expr", "p_word"): ["fact", "expr_"],
-                   ("expr_", "THEN"): ['@'],
-                   ("expr", "p_num"): ["fact", "expr_"], ("expr_", ";"): ['@'], ("expr_", "<"): ['@'],
-                   ("expr_", "+"): ["+", "fact", "expr_"],
-                   ("expr_", "*"): ["*", "fact", "expr_"], ("word", "p_word"): ['p_word'],
+                   ("fact", "p_word"): ["word"], ("cond", "p_word"): ["expr", "<", "expr"],("term_", "THEN"): ['@'],
+                   ("cond", "p_num"): ["expr", "<", "expr"], ("expr", "p_word"): ["term", "expr_"],
+                   ("expr_", "THEN"): ['@'],("term", "p_word"): ["fact", "term_"],("term", "p_num"): ["fact", "term_"],
+                   ("expr", "p_num"): ["term", "expr_"], ("expr_", ";"): ['@'], ("expr_", "<"): ['@'],
+                   ("expr_", "+"): ["+", "term", "expr_"],("term_", ";"): ['@'], ("term_", "<"): ['@'],
+                   ("term_", "*"): ["*", "fact", "term_"], ("word", "p_word"): ['p_word'],
                    ("num", "p_num"): ['p_num']
                    }
     non_ter = {"prog", "decls", "decls_", "decl", "vtype", "block", "slist", "slist_",
-               "stat", "cond", "expr", "expr_", "fact", "word", "num"}
+               "stat", "cond", "expr", "expr_", "fact", "word", "num", "term", "term_"}
 
     def parse(self, input_list, debug=False):
         root_node = None
