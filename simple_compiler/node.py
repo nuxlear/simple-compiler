@@ -185,7 +185,7 @@ class CondStat(NonTerminal):
         return [self.first_expr, self.second_expr]
 
     def traverse(self):
-        return [('lt', self.first_expr.traverse(), self.second_expr.traverse())]
+        return ('lt', self.first_expr.traverse(), self.second_expr.traverse())
 
     def repr_lines(self):
         return [f'{self.first_expr.repr_lines()} < {self.second_expr.repr_lines()}']
@@ -201,7 +201,7 @@ class AssignStat(Stat):
         return [self.word, self.expr]
 
     def traverse(self):
-        return [('assign', self.word.val, self.expr.traverse())]
+        return [('assign', self.word, self.expr.traverse())]
 
     def repr_lines(self):
         return [f'{self.word.val} = {self.expr};']
@@ -252,7 +252,7 @@ class ExprTail(NonTerminal):
         return [self.term, self.expr_]
 
     def traverse(self):
-        return [('+',) + self.term.traverse()] + self.expr_.traverse()
+        return [self.term.traverse()] + self.expr_.traverse()
 
     def repr_lines(self):
         return [self.op] + self.term.repr_lines() + self.expr_.repr_lines()
@@ -269,7 +269,7 @@ class Term(NonTerminal):
 
     def traverse(self):
         fs = [self.fact.traverse()] + self.term_.traverse()
-        return tuple(itertools.chain.from_iterable(fs))
+        return (tuple(itertools.chain.from_iterable(fs)),)
 
     def repr_lines(self):
         return self.fact.repr_lines() + self.term_.repr_lines()
@@ -288,7 +288,7 @@ class TermTail(NonTerminal):
         return [self.fact, self.term_]
 
     def traverse(self):
-        return [('*',) + self.fact.traverse()] + self.term_.traverse()
+        return [self.fact.traverse()] + self.term_.traverse()
 
     def repr_lines(self):
         return [self.op] + self.fact.repr_lines() + self.term_.repr_lines()
@@ -315,15 +315,19 @@ class Terminal(Node):
         self.val: Optional[str, int] = val
 
     def traverse(self):
-        return self.val
+        return self
 
     def repr_lines(self):
         return [self.val]
 
 
 class Word(Terminal):
-    pass
+    def __init__(self, val, parent=None):
+        super(Word, self).__init__(val, parent=parent)
+        self.symbol_id = None
+        self.addr = None
 
 
 class Num(Terminal):
-    pass
+    def __init__(self, val, parent=None):
+        super(Num, self).__init__(int(val), parent=parent)

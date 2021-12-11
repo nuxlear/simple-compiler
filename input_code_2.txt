@@ -1,18 +1,20 @@
-Main ( ) {
-  int a ;
-  int b ;
-  int c ;
-  char ca ;
-  char cb ;
-  char S ;
-  char F ;
-  a = 1 ;
-  b = 2 ;
-  c = 3 ;
-  S = success ;
-  F = fail ;
-  IF a < b THEN { IF b < c THEN { int a ; a = 4 ; c = a * b ; } ELSE { c = a + b ; } } ELSE { c = a ; }
-  IF a < 2 THEN { ca = S ; } ELSE { ca = F ; }
-  IF 7 < c THEN { cb = S ; } ELSE { cb = F ; }
-  EXIT 0 ;
+Main () {
+  int a;
+  int b;
+  int c;
+  char ca;
+  char cb;
+  char S;
+  char F;
+  a = 1;
+  b = 2;
+  c = 3;
+  S = s;
+  F = f;
+  IF a < b THEN { IF b < c THEN { int a; a = 4; c = a * b; } ELSE { c = a + b; } } ELSE { c = a; }
+  IF a < 2 THEN { ca = S; } ELSE { ca = F; }
+  IF 7 < c THEN { cb = S; } ELSE { cb = F; }
+  a = 4 + b * c;
+  b = 5 + 4 * c * 2 + 7 + a;
+  EXIT 0;
 }

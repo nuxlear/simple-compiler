@@ -14,10 +14,10 @@ class Lexer:
             lines = f.readlines()
 
         for line in lines:
-            tokens = line.strip().split(" ")
+            tokens = re.sub(r"([(){}<=+*;]|\w+)", r" \1 ", line.strip()).split(" ")
             for token in tokens:
-                # if token.find('\n') != -1:
-                #     token = token[0:-1]
+                if token == "":
+                    continue
 
                 token_type = gettype(token)
                 token_tuple = (token_type, token)
