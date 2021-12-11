@@ -37,34 +37,34 @@ class Parser:
     p_word = re.compile('[a-zA-Z]+')
     p_num = re.compile('[0-9]+')
 
-        parse_table = {("prog", "p_word"): ["word", "(", ")", "block"], ("decls", "p_word"): ["decls_"],
-                   ("decls", "IF"): ["decls_"], ("decls", "exit"): ["decls_"], ("decls", "$"): ["decls_"],
-                   ("decls", "int"): ["decls_"],
-                   ("decls", "char"): ["decls_"],("decls_", "p_word"): ["@"],
-                   ("decls_", "IF"): ['@'], ("decls_", "EXIT"): ['@'], ("decls_", "$"): ['@'],
-                   ("decls_", "int"): ["decl", "decls_"],
-                   ("decls_", "char"): ["decl", "decls_"], ("decl", "int"): ["vtype", "word", ";"],
-                   ("decl", "char"): ["vtype", "word", ";"],("decl", "p_word"): ["word", ";"],
-                   ("decl", "$"): ['@'], ("vtype", "p_word"): ['@'], ("vtype", "int"): ["int"],
-                   ("vtype", "char"): ["char"],
-                   ("vtype", "$"): ['@'], ("block", "IF"): ['@'], ("block", "ELSE"): ['@'],
-                   ("block", "EXIT"): ['@'],
-                   ("block", "$"): ['@'], ("block", "{"): ["{", "decls", "slist", "}"],
-                   ("slist", "p_word"): ["stat", "slist_"], ("slist", "IF"): ["stat", "slist_"],
-                   ("slist", "EXIT"): ["stat", "slist_"],
-                   ("slist", "}"): ['@'], ("slist", "$"): ['@'], ("slist_", "p_word"): ["stat", "slist_"],
-                   ("slist_", "IF"): ["stat", "slist_"], ("slist_", "EXIT"): ["stat", "slist_"],
-                   ("stat", "p_word"): ["word", "=", "expr", ";"],
-                   ("stat", "IF"): ["IF", "cond", "THEN", "block", "ELSE", "block"],
-                   ("stat", "EXIT"): ["EXIT", "expr", ";"], ("stat", "$"): ['@'], ("fact", "p_num"): ["num"],
-                   ("fact", "p_word"): ["word"], ("cond", "p_word"): ["expr", "<", "expr"],("term_", "THEN"): ['@'],
-                   ("cond", "p_num"): ["expr", "<", "expr"], ("expr", "p_word"): ["term", "expr_"],
-                   ("expr_", "THEN"): ['@'],("term", "p_word"): ["fact", "term_"],("term", "p_num"): ["fact", "term_"],
-                   ("expr", "p_num"): ["term", "expr_"], ("expr_", ";"): ['@'], ("expr_", "<"): ['@'],
-                   ("expr_", "+"): ["+", "term", "expr_"],("term_", ";"): ['@'], ("term_", "<"): ['@'],
-                   ("term_", "*"): ["*", "fact", "term_"], ("word", "p_word"): ['p_word'],
-                   ("num", "p_num"): ['p_num']
-                   }
+    parse_table = {("prog", "p_word"): ["word", "(", ")", "block"], ("decls", "p_word"): ["decls_"],
+               ("decls", "IF"): ["decls_"], ("decls", "exit"): ["decls_"], ("decls", "$"): ["decls_"],
+               ("decls", "int"): ["decls_"],
+               ("decls", "char"): ["decls_"],("decls_", "p_word"): ["@"],
+               ("decls_", "IF"): ['@'], ("decls_", "EXIT"): ['@'], ("decls_", "$"): ['@'],
+               ("decls_", "int"): ["decl", "decls_"],
+               ("decls_", "char"): ["decl", "decls_"], ("decl", "int"): ["vtype", "word", ";"],
+               ("decl", "char"): ["vtype", "word", ";"],("decl", "p_word"): ["word", ";"],
+               ("decl", "$"): ['@'], ("vtype", "p_word"): ['@'], ("vtype", "int"): ["int"],
+               ("vtype", "char"): ["char"],
+               ("vtype", "$"): ['@'], ("block", "IF"): ['@'], ("block", "ELSE"): ['@'],
+               ("block", "EXIT"): ['@'],
+               ("block", "$"): ['@'], ("block", "{"): ["{", "decls", "slist", "}"],
+               ("slist", "p_word"): ["stat", "slist_"], ("slist", "IF"): ["stat", "slist_"],
+               ("slist", "EXIT"): ["stat", "slist_"],
+               ("slist", "}"): ['@'], ("slist", "$"): ['@'], ("slist_", "p_word"): ["stat", "slist_"],
+               ("slist_", "IF"): ["stat", "slist_"], ("slist_", "EXIT"): ["stat", "slist_"],
+               ("stat", "p_word"): ["word", "=", "expr", ";"],
+               ("stat", "IF"): ["IF", "cond", "THEN", "block", "ELSE", "block"],
+               ("stat", "EXIT"): ["EXIT", "expr", ";"], ("stat", "$"): ['@'], ("fact", "p_num"): ["num"],
+               ("fact", "p_word"): ["word"], ("cond", "p_word"): ["expr", "<", "expr"],("term_", "THEN"): ['@'],
+               ("cond", "p_num"): ["expr", "<", "expr"], ("expr", "p_word"): ["term", "expr_"],
+               ("expr_", "THEN"): ['@'],("term", "p_word"): ["fact", "term_"],("term", "p_num"): ["fact", "term_"],
+               ("expr", "p_num"): ["term", "expr_"], ("expr_", ";"): ['@'], ("expr_", "<"): ['@'],
+               ("expr_", "+"): ["+", "term", "expr_"],("term_", ";"): ['@'], ("term_", "<"): ['@'],
+               ("term_", "*"): ["*", "fact", "term_"], ("word", "p_word"): ['p_word'],
+               ("num", "p_num"): ['p_num']
+               }
     non_ter = {"prog", "decls", "decls_", "decl", "vtype", "block", "slist", "slist_",
                "stat", "cond", "expr", "expr_", "fact", "word", "num", "term", "term_"}
 
@@ -169,6 +169,23 @@ def Maketree(origin_node):
         leaf1 = Maketree(origin_node.child[0])
         leaf2 = Maketree(origin_node.child[1])
         nodes = Expr(leaf1,leaf2)
+        leaf1.set_parent(nodes)
+        leaf2.set_parent(nodes)
+        return nodes
+    if origin_node.val == "term_":
+        if not origin_node.child:
+            nodes = Epsilon()
+            return nodes
+        leaf1 = Maketree(origin_node.child[1])
+        leaf2 = Maketree(origin_node.child[2])
+        nodes = TermTail(origin_node.child[0].val,leaf1,leaf2)
+        leaf1.set_parent(nodes)
+        leaf2.set_parent(nodes)
+        return nodes
+    if origin_node.val == "term":
+        leaf1 = Maketree(origin_node.child[0])
+        leaf2 = Maketree(origin_node.child[1])
+        nodes = Term(leaf1,leaf2)
         leaf1.set_parent(nodes)
         leaf2.set_parent(nodes)
         return nodes
